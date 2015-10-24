@@ -1,2 +1,7 @@
 #pycharm project files
 .idea
+
+# OS X junk files
+.DS_Store
+
+
