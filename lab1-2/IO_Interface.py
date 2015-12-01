@@ -38,7 +38,7 @@ class IO_Network(IO_Interface):
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error:
-            print "Failed to create socket"
+            print("Failed to create socket")
             sys.exit()
 
         return
@@ -47,9 +47,9 @@ class IO_Network(IO_Interface):
         try:
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.sock.bind((self.host, self.port))
-        except socket.error, err:
-            print 'Bind failed. Error Code : ' + str(err[0]) + ' Message ' + err[1]
-            print err
+        except socket.error as err:
+            print('Bind failed. Error Code : ' + str(err.args[0]) + ' Message ' + err.args[1])
+            print(err)
             sys.exit()
 
     def close_socket(self):
@@ -67,7 +67,7 @@ class IO_Network(IO_Interface):
     def write(self, location, data):
         try:
             self.sock.sendto(pickle.dumps(data), (self.host, self.port))
-        except socket.error, err:
-            print "Error Code : " + str(err[0]) + "Message" + err[1]
+        except socket.error as err:
+            print("Error Code : " + str(err.args[0]) + "Message" + err.args[1])
             sys.exit()
         return

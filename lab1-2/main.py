@@ -1,4 +1,4 @@
-import thread
+import _thread
 import time
 
 from receiver import Receiver
@@ -9,11 +9,11 @@ def main():
     receiver = Receiver()
     sender = Sender()
 
-    thread.start_new_thread(receiver.listen, ())
+    _thread.start_new_thread(receiver.listen, ())
     time.sleep(1)
     sender.send()
 
 
 if __name__ == "__main__":
-    print 'here'
+    print('here')
     main()

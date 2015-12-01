@@ -1,6 +1,6 @@
 from IO_Interface import IO_Network
-from Queue import Queue
-import thread
+from queue import Queue
+import _thread
 import time
 
 
@@ -25,20 +25,20 @@ class Broker(object):
         while True:
             msg = self.messageQueue.get()
             if msg.type == 'subscription':
-                print 'received subscription from: ' + msg.senderID
+                print('received subscription from: ' + msg.senderID)
                 self.subscribers.append(msg.body)
             elif msg.type == 'message':
                 for subscriber in self.subscribers:
                     if subscriber.id == msg.receiverID:
                         self.netWriter.port = subscriber.port
                         self.netWriter.host = subscriber.ip
-                        print 'message for ' + str(subscriber)
+                        print('message for ' + str(subscriber))
                         self.netWriter.write(msg.receiverID, msg)
                         break
 
     def main(self):
-        print 'here'
-        thread.start_new_thread(self.send, ())
+        print('here')
+        _thread.start_new_thread(self.send, ())
         self.listen()
 
 

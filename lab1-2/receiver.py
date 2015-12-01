@@ -1,6 +1,6 @@
 from IO_Interface import IO_Network, IO_File
 from utils import Subscriber, Message
-import thread
+import _thread
 
 BROKER_PORT = 8888
 DEFAULT_PORT = 7777
@@ -12,12 +12,12 @@ class Receiver(object):
         self.netReader.bind()
         self.netWriter = IO_Network(BROKER_PORT, 'localhost')
         self.fileWriter = IO_File()
-        print 'Socket bind complete'
+        print('Socket bind complete')
 
     def listen(self):
         while True:
             msg = self.netReader.read(None)
-            print '\nReceived message:{0}'.format(msg.body)
+            print('\nReceived message:{0}'.format(msg.body))
             self.fileWriter.write('received.xml', msg.body)
 
 
@@ -38,10 +38,10 @@ class Receiver(object):
 
 def main():
     receiver = Receiver()
-    thread.start_new_thread(receiver.send, ())
+    _thread.start_new_thread(receiver.send, ())
     receiver.listen()
 
 
 if __name__ == "__main__":
-    print 'here'
+    print('here')
     main()
