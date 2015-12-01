@@ -1,4 +1,5 @@
 import socket
+import pickle
 
 
 class DiscoveryClient(object):
@@ -7,7 +8,7 @@ class DiscoveryClient(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def send(self, port, ip, data):
-        self.sock.sendto(data, (ip, port))
+        self.sock.sendto(pickle.dumps(data), (ip, port))
 
 
 class DiscoveryListener(object):
@@ -16,7 +17,7 @@ class DiscoveryListener(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         try:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         except AttributeError as err:
             print(err)
 
@@ -38,5 +39,5 @@ class DiscoveryListener(object):
                 socket.inet_aton(ip) + socket.inet_aton('0.0.0.0'))
 
         self.sock.close()
-        return data
+        return pickle.loads(data)
 
