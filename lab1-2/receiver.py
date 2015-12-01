@@ -1,4 +1,4 @@
-from IO_Interface import IO_Network
+from IO_Interface import IO_Network, IO_File
 from utils import Subscriber, Message
 import thread
 
@@ -11,12 +11,15 @@ class Receiver(object):
         self.netReader = IO_Network(DEFAULT_PORT, 'localhost')
         self.netReader.bind()
         self.netWriter = IO_Network(BROKER_PORT, 'localhost')
+        self.fileWriter = IO_File()
         print 'Socket bind complete'
 
     def listen(self):
         while True:
             msg = self.netReader.read(None)
             print '\nReceived message:{0}'.format(msg.body)
+            self.fileWriter.write('received.xml', msg.body)
+
 
     def send(self):
         myself = Subscriber()
