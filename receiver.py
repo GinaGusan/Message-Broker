@@ -1,5 +1,6 @@
 from IO_Interface import IO_Network
 from utils import Subscriber, Message
+import thread
 
 BROKER_PORT = 8888
 DEFAULT_PORT = 7777
@@ -15,21 +16,18 @@ class Receiver(object):
     def listen(self):
         while True:
             msg = self.netReader.read(None)
-            if msg.body == 'close':
-                self.netWriter.close_socket()
-                self.netReader.close_socket()
             print '\nReceived message:{0}'.format(msg.body)
 
     def send(self):
         myself = Subscriber()
         myself.port = DEFAULT_PORT
         myself.ip = 'localhost'
-        myself.id = 'sender'
+        myself.id = 'app2'
 
         message = Message()
         message.type = 'subscription'
-        message.senderID = 'sender'
-        message.receiverID = 'receiver'
+        message.senderID = 'app2'
+        message.receiverID = 'broker'
         message.body = myself
 
         self.netWriter.write('broker', message)
@@ -37,7 +35,7 @@ class Receiver(object):
 
 def main():
     receiver = Receiver()
-    receiver.send()
+    thread.start_new_thread(receiver.send, ())
     receiver.listen()
 
 

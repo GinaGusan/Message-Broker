@@ -1,10 +1,11 @@
 from IO_Interface import IO_Network
 from Queue import Queue
 import thread
+import time
 
 
 BROKER_PORT = 8888
-DEFAULT_PORT = 7777
+DEFAULT_PORT = 6666
 
 
 class Broker(object):
@@ -17,30 +18,28 @@ class Broker(object):
 
     def listen(self):
         while True:
-            msg = self.netWriter.read(None)
+            msg = self.netReader.read(None)
             self.messageQueue.put(msg)
 
     def send(self):
         while True:
             msg = self.messageQueue.get()
             if msg.type == 'subscription':
+                print 'received subscription from: ' + msg.senderID
                 self.subscribers.append(msg.body)
             elif msg.type == 'message':
                 for subscriber in self.subscribers:
-                    if subscriber.id == msg.receiver:
+                    if subscriber.id == msg.receiverID:
                         self.netWriter.port = subscriber.port
                         self.netWriter.host = subscriber.ip
+                        print 'message for ' + str(subscriber)
+                        self.netWriter.write(msg.receiverID, msg)
                         break
-                if msg.body == 'close':
-                    self.netWriter.write(msg.receiver, msg)
-                    self.netReader.close_socket()
-                    self.netWriter.close_socket()
 
     def main(self):
         print 'here'
-        thread.start_new_thread(self.listen, ())
-        # thread.start_new_thread(self.send, ())
-        self.send()
+        thread.start_new_thread(self.send, ())
+        self.listen()
 
 
 def main():
@@ -50,7 +49,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    # create a thread for listener
-    # create a thread for sender
-    # use Queue for communication

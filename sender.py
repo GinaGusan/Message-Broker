@@ -1,6 +1,7 @@
 from IO_Interface import IO_Network
 from utils import Subscriber, Message
-import thread
+import time
+import xml.etree.ElementTree as ET
 
 BROKER_PORT = 8888
 DEFAULT_PORT = 9999
@@ -15,28 +16,24 @@ class Sender(object):
         myself = Subscriber()
         myself.port = DEFAULT_PORT  # sender port
         myself.ip = 'localhost'
-        myself.id = 'sender'
+        myself.id = 'app1'
 
         message = Message()
         message.type = 'subscription'
-        message.senderID = 'sender'
-        message.receiverID = 'receiver'
+        message.senderID = 'app1'
+        message.receiverID = 'broker'
         message.body = myself
 
         self.netWriter.write('broker', message)
 
         message.type = 'message'
+        tree = ET.parse('country_data.xml')
+        root = tree.getroot()
 
-        while True:
-            text = raw_input("Enter message to send: ")
-            if text == 'close':
-                self.netWriter.close_socket()
-                break
-            recipient = raw_input('Enter receiver: ')
-            message.body = text
-            message.receiverID = recipient
-            self.netWriter.write('receiver', message)
-        return
+        recipient = 'app2'
+        message.body = open('country_data.xml').read()
+        message.receiverID = recipient
+        self.netWriter.write('app2', message)
 
 
 def main():

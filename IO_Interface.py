@@ -1,5 +1,6 @@
 import socket
 import sys
+import pickle
 
 
 class IO_Interface(object):
@@ -18,15 +19,11 @@ class IO_File(IO_Interface):
         pass
 
     def read(self, location):
-        # Search how to read from file
-        # return content_of_the_file
         f = open(location, 'r')
         content = f.read()
         return content
 
     def write(self, location, data):
-        # Search how to write into a file
-        # return
         f = open(location, 'w')
         f.write(data)
         return
@@ -52,6 +49,7 @@ class IO_Network(IO_Interface):
             self.sock.bind((self.host, self.port))
         except socket.error, err:
             print 'Bind failed. Error Code : ' + str(err[0]) + ' Message ' + err[1]
+            print err
             sys.exit()
 
     def close_socket(self):
@@ -64,11 +62,11 @@ class IO_Network(IO_Interface):
             if not data:
                 break
             else:
-                return data
+                return pickle.loads(data)
 
     def write(self, location, data):
         try:
-            self.sock.sendto(data, (self.host, self.port))
+            self.sock.sendto(pickle.dumps(data), (self.host, self.port))
         except socket.error, err:
             print "Error Code : " + str(err[0]) + "Message" + err[1]
             sys.exit()
