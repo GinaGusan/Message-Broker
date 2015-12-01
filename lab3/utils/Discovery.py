@@ -1,5 +1,6 @@
 import socket
 import pickle
+import sys
 
 
 class DiscoveryClient(object):
@@ -9,6 +10,29 @@ class DiscoveryClient(object):
 
     def send(self, port, ip, data):
         self.sock.sendto(pickle.dumps(data), (ip, port))
+
+    def receive(self, port, ip):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind((ip, port))
+
+            while True:
+                data, addr = sock.recvfrom(1024)
+
+                if not data:
+                    break
+                else:
+                    data = pickle.loads(data)
+                    break
+            sock.close()
+
+        except socket.error as err:
+            print("Failed to create socket", err.args[1])
+            sys.exit()
+
+        return data
+
 
 
 class DiscoveryListener(object):
@@ -40,3 +64,7 @@ class DiscoveryListener(object):
         self.sock.close()
         return pickle.loads(data)
 
+    def send(self, ip, port, data):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.sendto(pickle.dumps(data), (ip, port))
