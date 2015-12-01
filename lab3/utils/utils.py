@@ -21,4 +21,4 @@ class Location(object):
         return self.ip + self.port
 
     def __str__(self):
-        return self.ip + ' ' + self.port
+        return self.ip + ' ' + str(self.port)

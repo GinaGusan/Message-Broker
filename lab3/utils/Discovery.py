@@ -33,7 +33,6 @@ class DiscoveryListener(object):
                 socket.inet_aton(ip) + socket.inet_aton(intf))
 
         data, sender_addr = self.sock.recvfrom(1024)
-        # Do some magic stuff
 
         self.sock.setsockopt(socket.SOL_IP, socket.IP_DROP_MEMBERSHIP,
                 socket.inet_aton(ip) + socket.inet_aton('0.0.0.0'))
